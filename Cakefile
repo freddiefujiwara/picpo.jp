@@ -18,9 +18,13 @@ task 'build', "build source files in './coffeescripts' to './javascripts'", ->
   coffee ['-o', 'javascripts', '-j','picpo','-c','coffeescripts']
 
 task 'clean', 'clean out temporary build files', ->
+  exec 'npm install', (err) ->
+    throw err if err
+  exec 'mkdir -p javascripts/', (err) ->
+    throw err if err
   if fs.readdirSync('javascripts/').length > 0
     exec 'find javascripts/ -type f | xargs rm -f ', (err) ->
-        throw err if err
+      throw err if err
       
 task 'spec', 'run jasmine-node spec suite', ->
   jasmine ['--coffee','--verbose','specs/']
