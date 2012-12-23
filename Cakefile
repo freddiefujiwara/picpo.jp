@@ -13,13 +13,14 @@ jasmine = (args) ->
   proc.on        'exit', (status) -> process.exit(1) if status != 0
 
 task 'build', "build source files in './coffeescripts' to './javascripts'", ->
-  coffee ['-c', '-o', 'coffeescripts','javascripts']
+  invoke 'clean'
+  invoke 'spec'
+  coffee ['-o', 'javascripts', '-j','picpo','-c','coffeescripts']
 
 task 'clean', 'clean out temporary build files', ->
   if fs.readdirSync('javascripts/').length > 0
-    exec 'rm javascripts/*.js', (err) ->
+    exec 'find javascripts/ -type f | xargs rm -f ', (err) ->
         throw err if err
       
 task 'spec', 'run jasmine-node spec suite', ->
-  invoke 'build'
   jasmine ['--coffee','--verbose','specs/']
